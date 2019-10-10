@@ -38,7 +38,7 @@ def markInfected():
 	# Mark the system as infected. One way to do
 	# this is to create a file called infected.txt
 	# in directory /tmp/
-    print("Mark file if infected")
+    print("Mark file infected")
     file(INFECTED_MARKER_FILE, "a+")
 
 ###############################################################
