@@ -1,0 +1,27 @@
+Group Members:
+
+Hector Rodriguez Reyes
+Justin Castillo
+Jason Mora-Mendoza
+
+How to run the Worm and Worm Cleaner:
+1) When you run it make sure worm.py is in your /tmp/ directory
+RUN:
+      cp worm.py /tmp/
+ - And you can run it through /tmp/ or wherever you have the worm.py file
+
+2) To infect other hosts
+RUN:
+      python worm.py -e
+
+3) To clean infection
+RUN:
+      python worm.py -c
+
+4) Don't run the following command:
+      python worm.py
+ - that would infect yourself
+
+
+Was the Extra Credit done:
+No
