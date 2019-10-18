@@ -5,6 +5,7 @@ Justin Castillo
 Jason Mora-Mendoza
 
 How to run the Worm and Worm Cleaner:
+
 1) When you run it make sure worm.py is in your /tmp/ directory
 RUN:
       cp worm.py /tmp/
@@ -24,4 +25,4 @@ RUN:
 
 
 Was the Extra Credit done:
-No
+- No
